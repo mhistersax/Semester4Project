@@ -18,9 +18,7 @@
     >
       <!-- Nav Logo -->
       <div class="logo">
-        <a
-          href="/books/home/"
-          class="font-sans text-base font-bold text-white"
+        <a href="/books/home/" class="font-sans text-base font-bold text-white"
           >e.library</a
         >
       </div>
@@ -73,22 +71,27 @@
           eliminating manual bookkeeping to streamlining resource management,
           <br />our platform ensures effortless library administration.
         </p>
-        <div class="start_reading flex w-full relative">
-          <div class="nav_search flex-grow mr-4">
-            <input
-              type="text"
-              class="w-full px-4 py-2 text-gray-800 bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-              name="Search Books"
-              placeholder="Search Books"
-            />
+        <form method="POST" action="{% url 'search-books' %}">
+          {% csrf_token %}
+          <div class="start_reading flex w-full relative">
+            <div class="nav_search flex-grow mr-4">
+              <input
+                type="text"
+                class="w-full px-4 py-2 text-gray-800 bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                name="name_of_book"
+                placeholder="Search Books"
+              />
+            </div>
+            <!-- Search icon -->
+            <div
+              class="search_icon bg-[#2cafdf] w-10 flex items-center justify-center rounded-md absolute top-0 right-0 bottom-0 m-auto cursor-pointer"
+            >
+              <button type="submit">
+                <img src="/asset/Search.svg" alt="Search_Icon" class="size-7" />
+              </button>
+            </div>
           </div>
-          <!-- Search icon -->
-          <div
-            class="search_icon bg-[#2cafdf] w-10 flex items-center justify-center rounded-md absolute top-0 right-0 bottom-0 m-auto cursor-pointer"
-          >
-            <img src="/asset/Search.svg" alt="Search_Icon" class="size-7" />
-          </div>
-        </div>
+        </form>
       </div>
     </div>
 
@@ -183,7 +186,7 @@
         <!-- Contact Form -->
         <div class="p-6 bg-transparent rounded-md shadow-md">
           <h2 class="text-lg font-semibold mb-4 text-white">Contact Us</h2>
-          <form>
+          <form method="POST" action="{% url 'enqiry-for-admin' %}">
             <div class="mb-4">
               <label for="name" class="block text-white">Your Name</label>
               <input
