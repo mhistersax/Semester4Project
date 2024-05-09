@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "books",
     "accounts",
     "book_category",
+    "landing_page",
 ]
 
 MIDDLEWARE = [
