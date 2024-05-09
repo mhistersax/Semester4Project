@@ -1,29 +1,52 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Search Books </title>
+    <title>Search Books</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
   </head>
-  <body>
-    <h1>Search Books</h1>
 
-    {% if authenticated %}
-    <ul>
-      {% for book in books %}
-      <li>
-        <h3>{{ book.title }}</h3>
-        <p>Author: {{ book.author }}</p>
-        <p>Publication Date: {{ book.publication_date }}</p>
-      </li>
-      {% endfor %}
-    </ul>
-    {% else %}
-    <ul>
-      {% for book in books %}
-      <li>{{ book.title }}</li>
-      {% endfor %}
-    </ul>
-    {% endif %}
+  <body
+    class="bg-gray-100 min-h-screen flex flex-col items-center justify-center"
+  >
+    <div class="w-full max-w-screen-lg">
+      <div class="bg-blue-600 text-white px-4 py-3 mb-4 rounded-md">
+        You are viewing this search book as a Guest. Please login to read more
+        details.
+      </div>
+
+      <h1 class="text-3xl font-bold mb-4">Search Books</h1>
+
+      {% if query %}
+      <p class="text-lg font-semibold mb-4">
+        This is the result of your query: "{{ query }}"
+      </p>
+      {% endif %}
+
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+      >
+        {% for book in books %}
+        <div class="bg-white shadow-md rounded-md p-4">
+          <h3 class="text-xl font-semibold">{{ book.title }}</h3>
+          <img
+            src="{{ book.image.url }}"
+            alt="Book Image"
+            class="mt-2 w-full rounded-md"
+          />
+          <a
+            href="/books/home"
+            class="block text-center mt-4 py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300"
+            >Read More</a
+          >
+        </div>
+        {% endfor %}
+      </div>
+    </div>
   </body>
 </html>

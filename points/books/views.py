@@ -13,20 +13,20 @@ def open_home_page(request):
 def search_books(request):
     if request.method == "POST":
         name = request.POST.get("name_of_book")  # Get the name from the form submission
-        books = Book.objects.filter(title__icontains=name)  # Search the database
-        return render(
-            request, "search_books.html", {"books": books}
-        )  # Render the results to search_books.html
+        if name:  # If there's a search query
+            books = Book.objects.filter(title__icontains=name)  # Search the database
+            return render(
+                request, "search_books.html", {"books": books, "query": name}
+            )  # Render the results to search_books.html along with the query
+        else:  # If no search query provided
+            return render(
+                request, "search_books.html"
+            )  # Render the search form without any results
     else:
         books = Book.objects.all()  # Retrieve all books from the database
-        if request.user.is_authenticated:
-            return render(
-                request, "search_books.html", {"books": books, "authenticated": True}
-            )
-        else:
-            return render(
-                request, "search_books.html", {"books": books, "authenticated": True}
-            )
+        return render(
+            request, "search_books.html", {"books": books}
+        )  # Render all books to the template
 
 
 # login page
