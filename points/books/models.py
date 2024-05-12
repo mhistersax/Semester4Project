@@ -6,6 +6,7 @@ from movies.models import Movie
 
 class Book(models.Model):
     BOOK_TYPE_CHOICES = [
+        ("", "Please select book type"),  # Option for selection prompt
         ("book", "Book"),
         ("video", "Video"),
     ]
@@ -19,7 +20,7 @@ class Book(models.Model):
     downloadable = models.BooleanField(default=False)
     category = models.ForeignKey(BookCategory, on_delete=models.CASCADE, null=True)
     book_type = models.CharField(
-        max_length=5, choices=BOOK_TYPE_CHOICES, default="book"
+        max_length=5, choices=BOOK_TYPE_CHOICES, default="", blank=True
     )
 
     # Image field for regular books

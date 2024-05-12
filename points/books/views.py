@@ -19,9 +19,10 @@ def search_books(request):
                 request, "search_books.html", {"books": books, "query": name}
             )  # Render the results to search_books.html along with the query
         else:  # If no search query provided
+            books = Book.objects.all()  # Retrieve all books from the database
             return render(
-                request, "search_books.html"
-            )  # Render the search form without any results
+                request, "search_books.html", {"books": books}
+            )  # Render all books to the template
     else:
         books = Book.objects.all()  # Retrieve all books from the database
         return render(

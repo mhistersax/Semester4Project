@@ -11,11 +11,17 @@ class BookAdmin(admin.ModelAdmin):
         "isbn",
         "quantity",
         "category",
+        "book_type",  # Add book_type to list display
         "image_preview",
         "movie_details",
         "downloadable",
     )
-    list_filter = ("author", "publication_date", "category")
+    list_filter = (
+        "author",
+        "publication_date",
+        "category",
+        "book_type",
+    )  # Add book_type to list filter
     search_fields = ("title", "author", "isbn", "category__name")
     readonly_fields = ("image_preview",)
 
@@ -30,6 +36,17 @@ class BookAdmin(admin.ModelAdmin):
             return "(No image)"
 
     image_preview.short_description = "Image Preview"
+
+    def save_model(self, request, obj, form, change):
+        # Check if book type is "Please select book type"
+        if obj.book_type == "":
+            # If book type is not selected, prevent saving
+            self.message_user(
+                request, "Please select a valid book type.", level="ERROR"
+            )
+            return
+        # Otherwise, allow saving
+        super().save_model(request, obj, form, change)
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
