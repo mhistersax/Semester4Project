@@ -1,15 +1,15 @@
 from django.http import JsonResponse
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
 
 
 def verify_users_credentials(request):
     # Get the username and password from the request parameters
-    if request.method == "GET":
-        username = request.GET.get("username")
-        password = request.GET.get("password")
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
         # Check if both username and password are provided
         if not (username and password):
             return JsonResponse(
@@ -22,12 +22,13 @@ def verify_users_credentials(request):
         # Check if authentication was successful
         if user is not None:
             # User with the provided credentials exists
-            return JsonResponse({"valid": True, "message": "Credentials are valid."})
+            # I want to send a message so it will be printed on the html
+            return render(request, "dashboard.html", {"user": user})
+        # I want it to redirect to login_success.html
         else:
             # User with the provided credentials does not exist
-            return JsonResponse(
-                {"valid": False, "message": "Invalid credentials."}, status=400
-            )
+            message = "Invalid credentials. Please try again."
+            return render(request, "status.html", {"message": message})
 
     else:
         # Only GET requests are allowed
@@ -76,7 +77,8 @@ def sign_up(request):
 
         # Check if the username is already taken
         if User.objects.filter(username=username).exists():
-            return JsonResponse({"error": "Username is already taken"}, status=400)
+            message = "Invalid credentials. Please try again."
+            return render(request, "status.html", {"message": message} , status=400)
 
         # Create the user
         user = User.objects.create_user(username=username, password=password)
