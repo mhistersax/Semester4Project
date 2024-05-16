@@ -1,12 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Book
 from django.views.decorators.csrf import csrf_exempt
 from accounts.models import ContactMessage
+from django.contrib.auth import logout
 
 
 # Create your views here.
 # load the index.html
 def open_home_page(request):
+    logout(request)
     return render(request, "base.html")
 
 
