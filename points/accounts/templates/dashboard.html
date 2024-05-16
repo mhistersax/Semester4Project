@@ -11,7 +11,7 @@
   <body class="bg-gray-100 min-h-screen flex flex-col">
     <!-- Nav bar -->
     <nav
-      class="flex w-full bg-transparent h-16 items-center justify-between px-4 z-10"
+      class="flex w-full bg-white h-16 items-center justify-between px-4 z-10"
     >
       <!-- Nav Logo -->
       <div class="logo">
@@ -109,19 +109,7 @@
 
     <!-- Text on the aside tag -->
     <div
-      class="flex flex-col h-[600px] w-full absolute items-center justify-center bg-gray-950"
-      style="
-        --mask: radial-gradient(
-              56.6px at 50% calc(100% - 78px),
-              #000 99%,
-              #0000 101%
-            )
-            calc(50% - 60px) 0/120px 100%,
-          radial-gradient(56.6px at 50% calc(100% + 48px), #0000 99%, #000 101%)
-            50% calc(100% - 30px) / 120px 100% repeat-x;
-        -webkit-mask: var(--mask);
-        mask: var(--mask);
-      "
+      class="flex flex-col h-[660px] w-full absolute items-center justify-center bg-gray-950"
     >
       <div class="welcome_text">
         <p class="text-white text-xl">Welcome To E library dashboard</p>
@@ -129,21 +117,70 @@
       <!-- card to display recently added -->
     </div>
 
-    <!-- list of categories -->
-    <div
-      class="bg-[#32c8ff] w-full relative h-[400px] mt-[-100px] z-[-10]"
-      style="
-        --mask: radial-gradient(56.6px at 50% 78px, #000 99%, #0000 101%)
-            calc(50% - 60px) 0/120px 100%,
-          radial-gradient(56.6px at 50% -48px, #0000 99%, #000 101%) 50% 30px/120px
-            100% repeat-x;
-        -webkit-mask: var(--mask);
-        mask: var(--mask);
-      "
-    >
-      <!-- card for Text book -->
-      <!-- I will loop all books with type book -->
-      <div class=""></div>
+    <!-- list of Random Suggested books -->
+    <div class="flex flex-col w-full justify-center items-center bg-[#32c8ff]">
+      <div class="text-white font-bold mt-8 font-serif">Suggested Books</div>
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 p-4"
+      >
+        {% for book in books %}
+        <div class="bg-slate-950 shadow-lg rounded-md p-4 flex flex-col gap-2">
+          <img
+            src="{{ book.image.url }}"
+            alt="Book Image"
+            class="mt-2 w-full rounded-md"
+          />
+          <!-- book details -->
+          <h3 class="text-xl font-semibold text-white">{{ book.title }}</h3>
+          <p class="text-white underline">Author: {{ book.author }}</p>
+          <p class="text-white underline">
+            Publication Date: {{ book.publication_date }}
+          </p>
+          <p class="text-white underline">ISBN: {{ book.isbn }}</p>
+          <p class="text-white">Description: {{ book.description }}</p>
+          <p class="text-white underline">
+            Downloadable: {% if book.downloadable %}Yes{% else %}No{% endif %}
+          </p>
+          <p class="text-white underline">Category: {{ book.category }}</p>
+          <p class="text-white underline">Book Type: {{ book.book_type }}</p>
+          <form action="{% url 'read-book' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="book_name" value="{{ book.title }}" />
+            <!-- Button to submit the form -->
+            <button
+              type="submit"
+              class="block text-center mt-4 py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300"
+            >
+              Read Book
+            </button>
+          </form>
+          {% if book.downloadable %}
+          <!-- Download book button -->
+          <a href="{{ book.text_file.url }}" download>
+            <button
+              class="block text-center mt-2 py-2 px-4 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-300"
+            >
+              Download Book
+            </button>
+          </a>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <!-- End of suggested books -->
+
+    <!-- movie book precie card -->
+    <div class="bg-slate-950 w-full flex justify-center items-center relative">
+      <img
+        src="/asset/Video_book_background.png"
+        alt="video_book_backgound"
+        class="opacity-25 rounded-lg"
+      />
+      <!-- Text ot the div -->
+      <div class="absolute">
+        <p class="text-white">Movie Book</p>
+      </div>
     </div>
 
     <!-- Javascript -->

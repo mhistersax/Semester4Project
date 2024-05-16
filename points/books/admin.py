@@ -9,7 +9,6 @@ class BookAdmin(admin.ModelAdmin):
         "author",
         "publication_date",
         "isbn",
-        "quantity",
         "category",
         "book_type",  # Add book_type to list display
         "image_preview",
@@ -52,18 +51,17 @@ class BookAdmin(admin.ModelAdmin):
         form = super().get_form(request, obj, **kwargs)
         book_type_field = form.base_fields.get("book_type")
         if book_type_field:
-            # If the book type is 'book', remove the video field
+            # If the book type is 'book', show the txt_file field
             if obj and obj.book_type == "book":
-                video_field = form.base_fields.get("video")
-                if video_field:
-                    video_field.required = False
-                    form.base_fields.pop("video")
-            # If the book type is 'video', remove the image field
+                txt_file_field = form.base_fields.get("txt_file")
+                if txt_file_field:
+                    txt_file_field.required = True
+            # If the book type is 'video', hide the txt_file field
             elif obj and obj.book_type == "video":
-                image_field = form.base_fields.get("image")
-                if image_field:
-                    image_field.required = False
-                    form.base_fields.pop("image")
+                txt_file_field = form.base_fields.get("txt_file")
+                if txt_file_field:
+                    txt_file_field.required = False
+                    form.base_fields.pop("txt_file")
         return form
 
     def movie_details(self, obj):

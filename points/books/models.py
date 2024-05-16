@@ -16,7 +16,6 @@ class Book(models.Model):
     publication_date = models.DateField()
     isbn = models.CharField(max_length=20, unique=True)
     description = models.TextField(blank=True)
-    quantity = models.PositiveIntegerField(default=0)
     downloadable = models.BooleanField(default=False)
     category = models.ForeignKey(BookCategory, on_delete=models.CASCADE, null=True)
     book_type = models.CharField(
@@ -29,6 +28,14 @@ class Book(models.Model):
         null=True,
         blank=True,
         validators=[FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png"])],
+    )
+
+    # Text file field for books with book_type 'txt'
+    text_file = models.FileField(
+        upload_to="book_text_files",
+        null=True,
+        blank=True,
+        validators=[FileExtensionValidator(allowed_extensions=["txt"])],
     )
 
     # ForeignKey relationship with Movie model
