@@ -147,7 +147,6 @@ def forgot_password(request):
 
 
 # def for rendering read_book.html and send the uploaded txt from book model
-@login_required
 def read_book(request):
     if request.method == "POST":
         # Get the name of the book from the request
@@ -160,19 +159,27 @@ def read_book(request):
             # Select the first book with the given name
             book = books.first()
 
-            # Get the text file associated with the book
-            text_file = book.text_file
+            # Check the book type
+            if book.book_type == "book":
+                # Get the text file associated with the book
+                text_file = book.text_file
 
-            if text_file:
-                # Read the content of the text file
-                text_content = text_file.read().decode("utf-8")
+                if text_file:
+                    # Read the content of the text file
+                    text_content = text_file.read().decode("utf-8")
 
-                # Render the read_book.html template with the text content
-                return render(request, "read_book.html", {"text_content": text_content})
+                    # Render the read_book.html template with the text content
+                    return render(
+                        request, "read_book.html", {"text_content": text_content}
+                    )
+                else:
+                    # If no text file is associated with the book, return an error response
+                    return JsonResponse(
+                        {"error": "No text file associated with the book."}, status=400
+                    )
             else:
-                # If no text file is associated with the book, return an error response
                 return JsonResponse(
-                    {"error": "No text file associated with the book."}, status=400
+                    {"error": "The selected book is not a text book."}, status=400
                 )
         else:
             # If no book with the given name is found, return an error response
@@ -181,3 +188,39 @@ def read_book(request):
             )
     else:
         return render(request, "read_book.html")
+
+
+def watch_video(request):
+    if request.method == "POST":
+        # Get the name of the book from the request
+        book_name = request.POST.get("book_name")
+
+        # Query the Book model to find the book with the given name
+        books = Book.objects.filter(title=book_name)
+
+        if books.exists():
+            # Select the first book with the given name
+            book = books.first()
+
+            # Check the book type
+            if book.book_type == "video":
+                # Get the associated movie
+                movie = book.movie
+                if movie:
+                    # Render the watch_video.html template with the movie
+                    return render(request, "watch_movie.html", {"movie": movie})
+                else:
+                    return JsonResponse(
+                        {"error": "No video associated with the book."}, status=400
+                    )
+            else:
+                return JsonResponse(
+                    {"error": "The selected book is not a video book."}, status=400
+                )
+        else:
+            # If no book with the given name is found, return an error response
+            return JsonResponse(
+                {"error": f'No book with the name "{book_name}" found.'}, status=400
+            )
+    else:
+        return render(request, "watch_video.html")

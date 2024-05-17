@@ -134,7 +134,8 @@
             alt="Book Image"
             class="mt-2 w-full rounded-md"
           />
-          <!-- book details -->
+
+          <!-- Book details -->
           <h3 class="text-xl font-semibold text-white">{{ book.title }}</h3>
           <p class="text-white underline">Author: {{ book.author }}</p>
           <p class="text-white underline">
@@ -147,6 +148,9 @@
           </p>
           <p class="text-white underline">Category: {{ book.category }}</p>
           <p class="text-white underline">Book Type: {{ book.book_type }}</p>
+
+          <!-- Conditional form display -->
+          {% if book.book_type == 'book' %}
           <form action="{% url 'read-book' %}" method="POST">
             {% csrf_token %}
             <input type="hidden" name="book_name" value="{{ book.title }}" />
@@ -158,13 +162,31 @@
               Read Book
             </button>
           </form>
+          {% elif book.book_type == 'video' %}
+          <form action="{% url 'watch-video' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="book_name" value="{{ book.title }}" />
+            <!-- Button to submit the form -->
+            <button
+              type="submit"
+              class="block text-center mt-4 py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300"
+            >
+              Watch Movie
+            </button>
+          </form>
+          {% endif %}
+
+          <!-- Download book button, only if downloadable -->
           {% if book.downloadable %}
-          <!-- Download book button -->
-          <a href="{{ book.text_file.url }}" download>
+          <a
+            href="{% if book.book_type == 'book' %}{{ book.text_file.url }}{% elif book.book_type == 'video' %}{{ book.movie.video.url }}{% endif %}"
+            download
+          >
             <button
               class="block text-center mt-2 py-2 px-4 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-300"
             >
-              Download Book
+              Download {% if book.book_type == 'book' %}Book{% elif
+              book.book_type == 'video' %}Video{% endif %}
             </button>
           </a>
           {% endif %}
