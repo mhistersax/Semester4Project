@@ -3,9 +3,9 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required
 from books.models import Book
 import random
+from django.contrib.auth.views import LogoutView
 
 
 def verify_users_credentials(request):
@@ -36,7 +36,9 @@ def verify_users_credentials(request):
 
             # rendering to dashboard.html
             return render(
-                request, "dashboard.html", {"user": user, "books": random_books}
+                request,
+                "dashboard.html",
+                {"user": user, "random_books": random_books, "all_books": all_books},
             )
         # I want it to redirect to login_success.html
         else:
@@ -224,3 +226,10 @@ def watch_video(request):
             )
     else:
         return render(request, "watch_video.html")
+
+
+logout_view = LogoutView.as_view(
+    template_name="logout.html",
+    next_page="/books/login/",  # redirect to login page after logout
+    extra_context={"message": "You have been logged out."},
+)

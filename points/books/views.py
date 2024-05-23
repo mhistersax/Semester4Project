@@ -3,6 +3,8 @@ from .models import Book
 from django.views.decorators.csrf import csrf_exempt
 from accounts.models import ContactMessage
 from django.contrib.auth import logout
+from django.db.models import Q
+from book_category.models import BookCategory
 
 
 # Create your views here.
@@ -16,7 +18,12 @@ def search_books(request):
     if request.method == "POST":
         name = request.POST.get("name_of_book")  # Get the name from the form submission
         if name:  # If there's a search query
-            books = Book.objects.filter(title__icontains=name)  # Search the database
+            books = Book.objects.filter(
+                Q(title__icontains=name)
+                | Q(author__icontains=name)
+                | Q(description__icontains=name)
+                | Q(category__name__icontains=name)
+            )
             return render(
                 request, "search_books.html", {"books": books, "query": name}
             )  # Render the results to search_books.html along with the query
@@ -52,3 +59,42 @@ def get_inquiries_user(request):
         return render(request, "thank_you.html")
     else:
         return render(request, "base.html#about-us")
+
+
+def auth_search_books(request):
+    if request.method == "POST":
+        name = request.POST.get("name_of_book")  # Get the name from the form submission
+        if name:  # If there's a search query
+            books = Book.objects.filter(
+                Q(title__icontains=name)
+                | Q(author__icontains=name)
+                | Q(description__icontains=name)
+                | Q(category__name__icontains=name)
+            )
+            return render(
+                request, "auth_search.html", {"books": books, "query": name}
+            )  # Render the results to search_books.html along with the query
+        else:  # If no search query provided
+            books = Book.objects.all()  # Retrieve all books from the database
+            return render(
+                request, "auth_search.html", {"books": books}
+            )  # Render all books to the template
+    else:
+        books = Book.objects.all()  # Retrieve all books from the database
+        return render(
+            request, "auth_search.html", {"books": books}
+        )  # Render all books to the template
+
+
+def report(request):
+    categories = BookCategory.objects.all()
+    report_data = {}
+
+    for category in categories:
+        books_in_category = Book.objects.filter(category=category)
+        books = [{"name": book.title} for book in books_in_category]
+        report_data[category.name] = {
+            "count": books_in_category.count(),
+            "books": books,
+        }
+    return render(request, "report.html", {"report_data": report_data})

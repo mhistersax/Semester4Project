@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.shortcuts import render
+from django.urls import path
 from django.utils.safestring import mark_safe
 from .models import Book
 
@@ -81,6 +83,31 @@ class BookAdmin(admin.ModelAdmin):
             return "(No movie selected)"
 
     movie_details.short_description = "Movie Details"
+
+    def get_urls(self):
+        urls = super().get_urls()
+        new_urls = [
+            path(
+                "report/", self.admin_site.admin_view(self.report_view), name="report"
+            ),
+        ]
+        return new_urls + urls
+
+    def report_view(self, request):
+        return render(request, "report.html", {"report_data": self.get_report_data()})
+
+    def get_report_data(self):
+        books = Book.objects.all()
+        categories = books.values_list("category__name", flat=True).distinct()
+        report_data = {}
+
+        for category in categories:
+            books_in_category = Book.objects.filter(category__name=category)
+            report_data[category] = {
+            "count": books_in_category.count(),
+            "books": [{"name": book.title} for book in books_in_category]
+            }
+        return report_data
 
 
 admin.site.register(Book, BookAdmin)
